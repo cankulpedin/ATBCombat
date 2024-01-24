@@ -4,71 +4,48 @@ using UnityEngine;
 
 public class BattleStateMachine : MonoBehaviour
 {
-    public enum PerformAction
+    public enum State
     {
-        WAITING,
-        TAKE_ACTION,
-        PERFORM_ACTION
+        Waiting,
+        Action,
+        Win,
+        Fail
     }
 
-    public enum HeroGUI
+    public State battleState;
+
+    public List<BattleTurn> BattleTurns = new List<BattleTurn>();
+
+    public List<GameObject> Heroes = new List<GameObject>();
+    public List<GameObject> Enemies = new List<GameObject>();
+
+    public List<GameObject> HeroQueue = new List<GameObject>();
+
+    private void Start()
     {
-        ACTIVATE,
-        WAITING,
-        INPUT1,
-        INPUT2,
-        DONE
+        battleState = State.Waiting;
+
+        Heroes.AddRange(GameObject.FindGameObjectsWithTag("Hero"));
+        Enemies.AddRange(GameObject.FindGameObjectsWithTag("Enemy"));
     }
 
-    public HeroGUI HeroInput;
-
-    public PerformAction battleState;
-
-    public List<HandleTurns> PerformList = new List<HandleTurns>();
-
-    public List<GameObject> HeroesInBattle = new List<GameObject>();
-    public List<GameObject> EnemiesInBattle = new List<GameObject>();
-    public List<GameObject> HeroesToManage = new List<GameObject>();
-
-    private HandleTurns HeroChoice;
-
-    void Start()
-    {
-        battleState = PerformAction.WAITING;
-
-        EnemiesInBattle.AddRange(GameObject.FindGameObjectsWithTag("Enemy"));
-        HeroesInBattle.AddRange(GameObject.FindGameObjectsWithTag("Hero"));
-    }
-
-    void Update()
+    private void Update()
     {
         switch (battleState)
         {
-            case PerformAction.WAITING:
-                if(PerformList.Count > 0)
-                {
-                    battleState = PerformAction.TAKE_ACTION;
-                }
+            case State.Waiting:
                 break;
-            case PerformAction.TAKE_ACTION:
-                GameObject performer = PerformList[0].AttackerGameObject;
-                Debug.Log(performer == null);
-                
-                EnemyStateMachine ESM = performer.GetComponent<EnemyStateMachine>();
-                ESM.Target = PerformList[0].TargetGameObject;
-                ESM.currentState = EnemyStateMachine.TurnState.ACTION;
-                
-                battleState = PerformAction.PERFORM_ACTION;
+            case State.Action:
                 break;
-            case PerformAction.PERFORM_ACTION: 
+            case State.Win:
+                break;
+            case State.Fail:
                 break;
         }
     }
 
-    public void AddAction(HandleTurns turnInput)
+    public void AddToTurnQueue(BattleTurn turn)
     {
-        PerformList.Add(turnInput);
+        BattleTurns.Add(turn);
     }
-
-    
 }
