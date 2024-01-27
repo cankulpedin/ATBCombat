@@ -9,5 +9,5 @@ public class BattleTurn
     public GameObject TurnOwnerGameObject;
     public GameObject targetGameObject;
 
-    // TODO type of action
+    public ActionTypes actionType;
 }

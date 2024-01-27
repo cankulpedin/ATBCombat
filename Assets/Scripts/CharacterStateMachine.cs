@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -13,6 +12,7 @@ public class CharacterStateMachine : MonoBehaviour
         WaitingForTurn, // hero
         SelectingAction,  // hero
         SelectingTarget, // hero
+        WaitingForAct, // hero & enemy
         Action, // hero & enemy
         WaitingForOtherActionFinish, // hero & enemy
         Death // hero & enemy
@@ -30,9 +30,10 @@ public class CharacterStateMachine : MonoBehaviour
     public GameObject SelectionTriangle;
     private GameObject SelectionTriangleClone;
 
+    public ActionTypes ActionType;
+    public ActionTypes[] Targetables = { ActionTypes.Attack, ActionTypes.Magic };
+
     private string CharacterType;
-    [SerializeField]
-    private string HeroAction;
 
     private BattleStateMachine BSM;
 
@@ -42,6 +43,7 @@ public class CharacterStateMachine : MonoBehaviour
     {
         MaxCooldown = characterData.BaseCooldown;
         state = State.Processing;
+        ActionType = ActionTypes.Wait;
 
         CharacterType = gameObject.tag;
 
@@ -63,6 +65,12 @@ public class CharacterStateMachine : MonoBehaviour
                 break;
             case State.SelectingTarget:
                 SelectTarget();
+                break;
+            case State.WaitingForAct:
+                break;
+            case State.Action:
+                // action()
+                CurrentCooldown = 0;
                 break;
         }
     }
@@ -90,8 +98,44 @@ public class CharacterStateMachine : MonoBehaviour
             {
                 BSM.HeroQueue.Add(gameObject);
                 state = State.WaitingForTurn;
+            } else if(CharacterType == "Enemy")
+            {
+                SelectEnemyAction();
             }
         }
+    }
+
+    private void SelectEnemyAction()
+    {
+        int randomIndex = UnityEngine.Random.Range(1, Enum.GetNames(typeof(ActionTypes)).Length);
+        Debug.Log("action "+randomIndex);
+        ActionTypes selectedAction = (ActionTypes)randomIndex;
+
+        if(selectedAction == ActionTypes.Pass)
+        {
+            state = State.Processing;
+            return;
+        } else if(selectedAction == ActionTypes.Flee)
+        {
+            // TODO Flee action, should be immediate
+            // will be put in first place in queue by some random chance
+        } else if(Array.Exists(Targetables, element => element == selectedAction)) {
+            Debug.Log("girdi " + BSM.Heroes.Count);
+            int randomTargetIndex = UnityEngine.Random.Range(0, BSM.Heroes.Count);
+            Debug.Log(randomTargetIndex);
+            GameObject randomTarget = BSM.Heroes[randomTargetIndex];
+
+            BattleTurn turn = new BattleTurn();
+            turn.TurnOwnerName = characterData.name;
+            turn.TurnOwnerGameObject = gameObject;
+            turn.targetGameObject = randomTarget;
+            turn.actionType = ActionType;
+            BSM.AddToTurnQueue(turn);
+        }
+
+        ActionType = ActionTypes.Wait;
+        state = State.WaitingForAct;
+        return;
     }
 
     private void CheckForTurn()
@@ -99,7 +143,7 @@ public class CharacterStateMachine : MonoBehaviour
         if (BSM.HeroQueue[0].Equals(gameObject))
         {
             state = State.SelectingAction;
-        }
+        } 
     }
 
     private void SelectingAction()
@@ -110,6 +154,7 @@ public class CharacterStateMachine : MonoBehaviour
         }
     }
 
+    // TODO add selection with mouse
     private void SelectTarget()
     {
         List<GameObject> targetsList = new List<GameObject>();
@@ -134,9 +179,11 @@ public class CharacterStateMachine : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Space))
         {
             BattleTurn newTurn = new BattleTurn();
-            newTurn.TurnOwnerName = gameObject.name;
+            newTurn.TurnOwnerName = characterData.name;
             newTurn.TurnOwnerGameObject = gameObject;
             newTurn.targetGameObject = targetsList[TargetIndex];
+            newTurn.actionType = ActionType;
+
             BSM.AddToTurnQueue(newTurn);
             BSM.HeroQueue.RemoveAt(0);
 
@@ -144,24 +191,26 @@ public class CharacterStateMachine : MonoBehaviour
             SelectionTriangleClone = null;
 
             TargetIndex = 0;
-            state = State.Processing;
-            CurrentCooldown = 0;
+            state = State.WaitingForAct;
             Panel.gameObject.SetActive(false);
-            HeroAction = null;
+            ActionType = ActionTypes.Wait;
         }
     }
 
-    public void SetNewState(string action)
+    public void SetNewState(int action)
     {
-        if(HeroAction == null || HeroAction == "") {
-            HeroAction = action;
+        if(ActionType == ActionTypes.Wait) {
+            ActionType = (ActionTypes)action;
 
-            GameObject initialTarget = BSM.Enemies[0];
-            Vector3 initialTargetLocation = initialTarget.transform.position;
-            SelectionTriangleClone = Instantiate(SelectionTriangle,
-                new Vector3(initialTargetLocation.x, initialTargetLocation.y + initialTarget.GetComponent<BoxCollider2D>().bounds.size.y, initialTargetLocation.z), new Quaternion(0f, 0f, 180f, 0f));
+            if(Array.Exists(Targetables, element=> element == (ActionTypes)action))
+            {
+                GameObject initialTarget = BSM.Enemies[0];
+                Vector3 initialTargetLocation = initialTarget.transform.position;
+                SelectionTriangleClone = Instantiate(SelectionTriangle,
+                    new Vector3(initialTargetLocation.x, initialTargetLocation.y + initialTarget.GetComponent<BoxCollider2D>().bounds.size.y, initialTargetLocation.z), new Quaternion(0f, 0f, 180f, 0f));
 
-            state = State.SelectingTarget;
+                state = State.SelectingTarget;
+            }
         }
     }
 }
