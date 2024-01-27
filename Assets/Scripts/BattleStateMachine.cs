@@ -14,7 +14,8 @@ public class BattleStateMachine : MonoBehaviour
 
     public State battleState;
 
-    public List<BattleTurn> BattleTurns = new List<BattleTurn>();
+    [SerializeField]
+    private List<BattleTurn> BattleTurns = new List<BattleTurn>();
 
     public List<GameObject> Heroes = new List<GameObject>();
     public List<GameObject> Enemies = new List<GameObject>();
@@ -48,4 +49,5 @@ public class BattleStateMachine : MonoBehaviour
     {
         BattleTurns.Add(turn);
     }
+
 }
