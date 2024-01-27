@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,7 +29,7 @@ public class CharacterStateMachine : MonoBehaviour
     public GameObject SelectionTriangle;
     private GameObject SelectionTriangleClone;
 
-    public ActionTypes ActionType;
+    public ActionTypes ActionType; // this is only for hero, to arrange menus
     public ActionTypes[] Targetables = { ActionTypes.Attack, ActionTypes.Magic };
 
     private string CharacterType;
@@ -129,11 +128,10 @@ public class CharacterStateMachine : MonoBehaviour
             turn.TurnOwnerName = characterData.name;
             turn.TurnOwnerGameObject = gameObject;
             turn.targetGameObject = randomTarget;
-            turn.actionType = ActionType;
+            turn.actionType = selectedAction;
             BSM.AddToTurnQueue(turn);
         }
 
-        ActionType = ActionTypes.Wait;
         state = State.WaitingForAct;
         return;
     }
