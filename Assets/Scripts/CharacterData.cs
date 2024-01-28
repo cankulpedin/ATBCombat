@@ -5,6 +5,7 @@ public class CharacterData
 
     public float HP;
     public float MP;
+    public float baseDamage;
 
     public float BaseCooldown = 3f;
 

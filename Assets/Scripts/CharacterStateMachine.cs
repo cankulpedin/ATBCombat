@@ -60,7 +60,8 @@ public class CharacterStateMachine : MonoBehaviour
 
     private void Update()
     {
-        switch (state) { 
+        switch (state)
+        {
             case State.Processing:
                 Processing();
                 break;
@@ -83,7 +84,7 @@ public class CharacterStateMachine : MonoBehaviour
 
     private IEnumerator Action()
     {
-        if(ActionStarted)
+        if (ActionStarted)
         {
             yield break;
         }
@@ -97,7 +98,7 @@ public class CharacterStateMachine : MonoBehaviour
         switch (turnAction)
         {
             case ActionTypes.Attack:
-                while(MoveTowards(target.transform.position)) yield return null;
+                while (MoveTowards(target.transform.position)) yield return null;
 
                 yield return new WaitForSeconds(1f);
 
@@ -118,7 +119,7 @@ public class CharacterStateMachine : MonoBehaviour
 
     private bool MoveTowards(Vector3 target)
     {
-        return target != (transform.position = Vector3.MoveTowards(transform.position,target, AnimationSpeed * Time.deltaTime));
+        return target != (transform.position = Vector3.MoveTowards(transform.position, target, AnimationSpeed * Time.deltaTime));
     }
 
     private void Processing()
@@ -133,18 +134,19 @@ public class CharacterStateMachine : MonoBehaviour
 
         float calculatedCooldown = CurrentCooldown / MaxCooldown;
 
-        if (CharacterType == "Hero") 
+        if (CharacterType == "Hero")
         {
             ProgressBar.transform.localScale = new Vector3(Mathf.Clamp(calculatedCooldown, 0, 1), ProgressBar.transform.localScale.y, ProgressBar.transform.localScale.z);
         }
 
-        if(CurrentCooldown > MaxCooldown)
+        if (CurrentCooldown > MaxCooldown)
         {
-            if(CharacterType == "Hero")
+            if (CharacterType == "Hero")
             {
                 BSM.HeroQueue.Add(gameObject);
                 state = State.WaitingForTurn;
-            } else if(CharacterType == "Enemy")
+            }
+            else if (CharacterType == "Enemy")
             {
                 SelectEnemyAction();
             }
@@ -156,11 +158,13 @@ public class CharacterStateMachine : MonoBehaviour
         int randomIndex = UnityEngine.Random.Range(1, Enum.GetNames(typeof(ActionTypes)).Length);
         ActionTypes selectedAction = (ActionTypes)randomIndex;
 
-        if(selectedAction == ActionTypes.Pass)
+        if (selectedAction == ActionTypes.Pass)
         {
             state = State.Processing;
             return;
-        } else if(Array.Exists(Targetables, element => element == selectedAction)) {
+        }
+        else if (Array.Exists(Targetables, element => element == selectedAction))
+        {
             int randomTargetIndex = UnityEngine.Random.Range(0, BSM.Heroes.Count);
             GameObject randomTarget = BSM.Heroes[randomTargetIndex];
 
@@ -181,7 +185,7 @@ public class CharacterStateMachine : MonoBehaviour
         if (BSM.HeroQueue[0].Equals(gameObject))
         {
             state = State.SelectingAction;
-        } 
+        }
     }
 
     private void SelectingAction()
@@ -191,7 +195,6 @@ public class CharacterStateMachine : MonoBehaviour
             Panel.gameObject.SetActive(true);
         }
     }
-
 
     private void ChangeSelectionTrianglePosition(Vector3 position, float elementSizeY)
     {
@@ -208,10 +211,10 @@ public class CharacterStateMachine : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity);
-            
-            if(hit.collider != null)
+
+            if (hit.collider != null)
             {
-                TargetIndex = targetsList.FindIndex(element=>element.gameObject == hit.collider.gameObject);
+                TargetIndex = targetsList.FindIndex(element => element.gameObject == hit.collider.gameObject);
                 Vector3 targetLocation = targetsList[TargetIndex].transform.position;
 
                 ChangeSelectionTrianglePosition(targetLocation, targetsList[TargetIndex].GetComponent<BoxCollider2D>().bounds.size.y);
@@ -255,10 +258,11 @@ public class CharacterStateMachine : MonoBehaviour
 
     public void SetNewState(int action)
     {
-        if(ActionType == ActionTypes.Wait) {
+        if (ActionType == ActionTypes.Wait)
+        {
             ActionType = (ActionTypes)action;
 
-            if(Array.Exists(Targetables, element=> element == (ActionTypes)action))
+            if (Array.Exists(Targetables, element => element == (ActionTypes)action))
             {
                 GameObject initialTarget = BSM.Enemies[0];
                 Vector3 initialTargetLocation = initialTarget.transform.position;

@@ -37,7 +37,7 @@ public class BattleStateMachine : MonoBehaviour
         switch (battleState)
         {
             case State.Waiting:
-                if(BattleTurns.Count > 0)
+                if (BattleTurns.Count > 0)
                 {
                     battleState = State.Action;
                 }
@@ -60,7 +60,7 @@ public class BattleStateMachine : MonoBehaviour
 
         CharacterStateMachine CSM = turnOwner.GetComponent<CharacterStateMachine>();
 
-        switch(turnAction)
+        switch (turnAction)
         {
             case ActionTypes.Attack:
                 CSM.state = CharacterStateMachine.State.Action;
