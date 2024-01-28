@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BattleStateMachine : MonoBehaviour
@@ -12,7 +13,8 @@ public class BattleStateMachine : MonoBehaviour
         Fail
     }
 
-    public State battleState;
+    [SerializeField]
+    private State battleState;
 
     [SerializeField]
     private List<BattleTurn> BattleTurns = new List<BattleTurn>();
@@ -35,8 +37,13 @@ public class BattleStateMachine : MonoBehaviour
         switch (battleState)
         {
             case State.Waiting:
+                if(BattleTurns.Count > 0)
+                {
+                    battleState = State.Action;
+                }
                 break;
             case State.Action:
+                Action();
                 break;
             case State.Win:
                 break;
@@ -45,9 +52,40 @@ public class BattleStateMachine : MonoBehaviour
         }
     }
 
+    private void Action()
+    {
+        BattleTurn currentTurn = BattleTurns[0];
+        GameObject turnOwner = currentTurn.TurnOwnerGameObject;
+        ActionTypes turnAction = currentTurn.actionType;
+
+        CharacterStateMachine CSM = turnOwner.GetComponent<CharacterStateMachine>();
+
+        switch(turnAction)
+        {
+            case ActionTypes.Attack:
+                CSM.state = CharacterStateMachine.State.Action;
+                break;
+            case ActionTypes.Pass:
+                RemoveCurrentTurn();
+                break;
+        }
+    }
+
+    public BattleTurn GetFirstTurn()
+    {
+        return BattleTurns[0];
+    }
+
+    public void RemoveCurrentTurn()
+    {
+        BattleTurns.RemoveAt(0);
+        battleState = State.Waiting;
+    }
+
     public void AddToTurnQueue(BattleTurn turn)
     {
         BattleTurns.Add(turn);
+        battleState = State.Action;
     }
 
 }

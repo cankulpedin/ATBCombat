@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,14 +24,16 @@ public class CharacterStateMachine : MonoBehaviour
 
     private float CurrentCooldown = 0f;
     private float MaxCooldown;
+    private float AnimationSpeed = 5f;
 
     public Image ProgressBar;
+
     public GameObject Panel;
     public GameObject SelectionTriangle;
     private GameObject SelectionTriangleClone;
 
     public ActionTypes ActionType; // this is only for hero, to arrange menus
-    public ActionTypes[] Targetables = { ActionTypes.Attack, ActionTypes.Magic };
+    public ActionTypes[] Targetables = { ActionTypes.Attack, /*ActionTypes.Magic*/ };
 
     private string CharacterType;
 
@@ -38,11 +41,17 @@ public class CharacterStateMachine : MonoBehaviour
 
     private int TargetIndex = 0;
 
+    private Vector3 InitialPosition;
+
+    private bool ActionStarted = false;
+
     private void Start()
     {
         MaxCooldown = characterData.BaseCooldown;
         state = State.Processing;
         ActionType = ActionTypes.Wait;
+
+        InitialPosition = transform.position;
 
         CharacterType = gameObject.tag;
 
@@ -67,10 +76,49 @@ public class CharacterStateMachine : MonoBehaviour
             case State.WaitingForAct:
                 break;
             case State.Action:
-                // action()
-                CurrentCooldown = 0;
+                StartCoroutine(Action());
                 break;
         }
+    }
+
+    private IEnumerator Action()
+    {
+        if(ActionStarted)
+        {
+            yield break;
+        }
+
+        ActionStarted = true;
+
+        BattleTurn currentTurn = BSM.GetFirstTurn();
+        GameObject target = currentTurn.targetGameObject;
+        ActionTypes turnAction = currentTurn.actionType;
+
+        switch (turnAction)
+        {
+            case ActionTypes.Attack:
+                while(MoveTowards(target.transform.position)) yield return null;
+
+                yield return new WaitForSeconds(1f);
+
+                // TODO do damage
+
+                while (MoveTowards(InitialPosition)) yield return null;
+
+
+                break;
+        }
+
+        BSM.RemoveCurrentTurn();
+
+        ActionStarted = false;
+        CurrentCooldown = 0f;
+        state = State.Processing;
+    }
+
+    private bool MoveTowards(Vector3 target)
+    {
+        return target != (transform.position = Vector3.MoveTowards(transform.position,target, AnimationSpeed * Time.deltaTime));
     }
 
     private void Processing()
@@ -112,10 +160,6 @@ public class CharacterStateMachine : MonoBehaviour
         {
             state = State.Processing;
             return;
-        } else if(selectedAction == ActionTypes.Flee)
-        {
-            // TODO Flee action, should be immediate
-            // will be put in first place in queue by some random chance
         } else if(Array.Exists(Targetables, element => element == selectedAction)) {
             int randomTargetIndex = UnityEngine.Random.Range(0, BSM.Heroes.Count);
             GameObject randomTarget = BSM.Heroes[randomTargetIndex];
