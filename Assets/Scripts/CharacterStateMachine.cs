@@ -51,7 +51,6 @@ public class CharacterStateMachine : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(state);
         switch (state) { 
             case State.Processing:
                 Processing();
@@ -107,7 +106,6 @@ public class CharacterStateMachine : MonoBehaviour
     private void SelectEnemyAction()
     {
         int randomIndex = UnityEngine.Random.Range(1, Enum.GetNames(typeof(ActionTypes)).Length);
-        Debug.Log("action "+randomIndex);
         ActionTypes selectedAction = (ActionTypes)randomIndex;
 
         if(selectedAction == ActionTypes.Pass)
@@ -119,9 +117,7 @@ public class CharacterStateMachine : MonoBehaviour
             // TODO Flee action, should be immediate
             // will be put in first place in queue by some random chance
         } else if(Array.Exists(Targetables, element => element == selectedAction)) {
-            Debug.Log("girdi " + BSM.Heroes.Count);
             int randomTargetIndex = UnityEngine.Random.Range(0, BSM.Heroes.Count);
-            Debug.Log(randomTargetIndex);
             GameObject randomTarget = BSM.Heroes[randomTargetIndex];
 
             BattleTurn turn = new BattleTurn();
@@ -152,27 +148,45 @@ public class CharacterStateMachine : MonoBehaviour
         }
     }
 
-    // TODO add selection with mouse
+
+    private void ChangeSelectionTrianglePosition(Vector3 position, float elementSizeY)
+    {
+        SelectionTriangleClone.transform.position = new Vector3(position.x, position.y + elementSizeY, position.z);
+    }
+
     private void SelectTarget()
     {
         List<GameObject> targetsList = new List<GameObject>();
         targetsList.AddRange(BSM.Enemies);
         targetsList.AddRange(BSM.Heroes);
 
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity);
+            
+            if(hit.collider != null)
+            {
+                TargetIndex = targetsList.FindIndex(element=>element.gameObject == hit.collider.gameObject);
+                Vector3 targetLocation = targetsList[TargetIndex].transform.position;
+
+                ChangeSelectionTrianglePosition(targetLocation, targetsList[TargetIndex].GetComponent<BoxCollider2D>().bounds.size.y);
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             TargetIndex = TargetIndex == targetsList.Count - 1 ? 0 : TargetIndex + 1;
             Vector3 targetLocation = targetsList[TargetIndex].transform.position;
 
-            SelectionTriangleClone.transform.position = new Vector3(targetLocation.x, targetLocation.y + targetsList[TargetIndex].GetComponent<BoxCollider2D>().bounds.size.y, targetLocation.z);
+            ChangeSelectionTrianglePosition(targetLocation, targetsList[TargetIndex].GetComponent<BoxCollider2D>().bounds.size.y);
+
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             TargetIndex = TargetIndex == 0 ? targetsList.Count - 1 : TargetIndex - 1;
             Vector3 targetLocation = targetsList[TargetIndex].transform.position;
 
-            SelectionTriangleClone.transform.position = new Vector3(targetLocation.x, targetLocation.y + targetsList[TargetIndex].GetComponent<BoxCollider2D>().bounds.size.y, targetLocation.z);
-
+            ChangeSelectionTrianglePosition(targetLocation, targetsList[TargetIndex].GetComponent<BoxCollider2D>().bounds.size.y);
         }
         else if (Input.GetKeyDown(KeyCode.Space))
         {
