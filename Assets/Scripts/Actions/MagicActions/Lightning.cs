@@ -1,8 +1,9 @@
-﻿public class Fire : BaseMagicAction
+public class Lightning : BaseMagicAction
 {
-    public Fire() {
+    public Lightning()
+    {
         MagicType = MagicTypes.Fire;
-        Damage = 40f;
+        Damage = 50f;
         MPCost = 10f;
         MinIntRequirment = 2;
     }

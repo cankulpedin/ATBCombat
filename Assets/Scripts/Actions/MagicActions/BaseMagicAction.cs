@@ -6,5 +6,7 @@ public abstract class BaseMagicAction
     public float Damage; // base damage
     public float MPCost;
 
-    public int minIntRequirment;
+    public int MinIntRequirment;
+
+    public float StatusAccumulation; 
 }

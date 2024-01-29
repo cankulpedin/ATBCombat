@@ -15,6 +15,9 @@ public class CharacterData
     public int Strenght;
     public int Luck;
 
+    public int ElementalResistance;
+    public int HolyResistance;
+
     public enum Status
     {
         Normal,
@@ -25,4 +28,15 @@ public class CharacterData
     }
 
     public Status CharacterStatus;
+
+    public struct StatusAccumulationLimits
+    {
+        public float Poison;
+        public float Frost;
+        public float Terror;
+    }
+
+    public float Poison = 0f;
+    public float Frost = 0f;
+    public float Terror = 0f;
 }

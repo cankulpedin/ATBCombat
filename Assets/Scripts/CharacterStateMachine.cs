@@ -35,6 +35,8 @@ public class CharacterStateMachine : MonoBehaviour
     public ActionTypes ActionType; // this is only for hero, to arrange menus
     public ActionTypes[] Targetables = { ActionTypes.Attack, ActionTypes.Magic };
 
+    private MagicTypes SelectedMagicType = MagicTypes.Null;
+
     private string CharacterType;
 
     private BattleStateMachine BSM;
@@ -272,6 +274,7 @@ public class CharacterStateMachine : MonoBehaviour
         if (ActionType == ActionTypes.Wait)
         {
             ActionType = action;
+            SelectedMagicType = magic;
 
             if (Array.Exists(Targetables, element => element == action))
             {

@@ -11,5 +11,6 @@
     Slow,
     Regenerate,
     Heal,
-    Revive
+    Revive,
+    Terror
 }
