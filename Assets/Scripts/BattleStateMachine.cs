@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BattleStateMachine : MonoBehaviour
 {
@@ -10,7 +11,8 @@ public class BattleStateMachine : MonoBehaviour
         Waiting,
         Action,
         Win,
-        Fail
+        Fail,
+        HeroRunAway
     }
 
     [SerializeField]
@@ -37,6 +39,14 @@ public class BattleStateMachine : MonoBehaviour
         switch (battleState)
         {
             case State.Waiting:
+                if(Enemies.Count < 1)
+                {
+                    battleState = State.Win;
+                }
+                if(Heroes.Count < 1)
+                {
+                    battleState = State.Fail;
+                }
                 if (BattleTurns.Count > 0)
                 {
                     battleState = State.Action;
@@ -45,9 +55,12 @@ public class BattleStateMachine : MonoBehaviour
             case State.Action:
                 Action();
                 break;
+            case State.HeroRunAway:
             case State.Win:
+                // TODO close the battle scene
                 break;
             case State.Fail:
+                // TODO show game over screen
                 break;
         }
     }

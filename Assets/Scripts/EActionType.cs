@@ -2,7 +2,7 @@ public enum ActionTypes
 {
     Wait,
     Attack,
-    // Magic,
+    Magic,
     Pass,
     // Flee
 }

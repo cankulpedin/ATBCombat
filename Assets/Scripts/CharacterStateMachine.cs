@@ -33,7 +33,7 @@ public class CharacterStateMachine : MonoBehaviour
     private GameObject SelectionTriangleClone;
 
     public ActionTypes ActionType; // this is only for hero, to arrange menus
-    public ActionTypes[] Targetables = { ActionTypes.Attack, /*ActionTypes.Magic*/ };
+    public ActionTypes[] Targetables = { ActionTypes.Attack, ActionTypes.Magic };
 
     private string CharacterType;
 
@@ -45,11 +45,15 @@ public class CharacterStateMachine : MonoBehaviour
 
     private bool ActionStarted = false;
 
+    public Animator animator;
+
     private void Start()
     {
         MaxCooldown = characterData.BaseCooldown;
         state = State.Processing;
         ActionType = ActionTypes.Wait;
+
+        animator = GetComponent<Animator>();
 
         InitialPosition = transform.position;
 
@@ -98,14 +102,21 @@ public class CharacterStateMachine : MonoBehaviour
         switch (turnAction)
         {
             case ActionTypes.Attack:
+                animator.SetBool("attacking", true);
+
                 while (MoveTowards(target.transform.position)) yield return null;
+
+                animator.SetBool("attacking", false);
+
+                target.GetComponent<CharacterStateMachine>().characterData.HP -= characterData.baseDamage;
+
+                animator.SetBool("attacking", true);
 
                 yield return new WaitForSeconds(1f);
 
-                // TODO do damage
-
                 while (MoveTowards(InitialPosition)) yield return null;
 
+                animator.SetBool("attacking", false);
 
                 break;
         }
@@ -256,13 +267,13 @@ public class CharacterStateMachine : MonoBehaviour
         }
     }
 
-    public void SetNewState(int action)
+    public void SetNewState(ActionTypes action, MagicTypes magic= MagicTypes.Null)
     {
         if (ActionType == ActionTypes.Wait)
         {
-            ActionType = (ActionTypes)action;
+            ActionType = action;
 
-            if (Array.Exists(Targetables, element => element == (ActionTypes)action))
+            if (Array.Exists(Targetables, element => element == action))
             {
                 GameObject initialTarget = BSM.Enemies[0];
                 Vector3 initialTargetLocation = initialTarget.transform.position;

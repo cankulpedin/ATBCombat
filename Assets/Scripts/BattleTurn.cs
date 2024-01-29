@@ -8,4 +8,5 @@ public class BattleTurn
     public GameObject targetGameObject;
 
     public ActionTypes actionType;
+    public BaseMagicAction MagicAction;
 }
