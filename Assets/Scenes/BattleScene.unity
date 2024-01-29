@@ -536,7 +536,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &319347345
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1858,7 +1858,12 @@ MonoBehaviour:
     Intelligence: 0
     Strenght: 0
     Luck: 0
+    ElementalResistance: 0
+    HolyResistance: 0
     CharacterStatus: 0
+    Poison: 0
+    Frost: 0
+    Terror: 0
   ProgressBar: {fileID: 1024392874}
   Panel: {fileID: 1834776210}
   SelectionTriangle: {fileID: 100622233496952209, guid: 46baf1c7b20a4b24497e8b04164a3bcf, type: 3}
@@ -4621,7 +4626,12 @@ MonoBehaviour:
     Intelligence: 0
     Strenght: 0
     Luck: 0
+    ElementalResistance: 0
+    HolyResistance: 0
     CharacterStatus: 0
+    Poison: 0
+    Frost: 0
+    Terror: 0
   ProgressBar: {fileID: 0}
   Panel: {fileID: 0}
   SelectionTriangle: {fileID: 0}
@@ -5041,10 +5051,10 @@ RectTransform:
   - {fileID: 614024092}
   m_Father: {fileID: 319347345}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 56.2572}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 217.22304, y: -140.64299}
+  m_SizeDelta: {x: 434.44608, y: 56.2572}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1706501041
 MonoBehaviour:
@@ -5296,10 +5306,10 @@ RectTransform:
   - {fileID: 775699815}
   m_Father: {fileID: 319347345}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 56.2572}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 217.22304, y: -84.385796}
+  m_SizeDelta: {x: 434.44608, y: 56.2572}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1896742346
 MonoBehaviour:
@@ -5570,10 +5580,10 @@ RectTransform:
   - {fileID: 517823046}
   m_Father: {fileID: 319347345}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 56.2572}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 217.22304, y: -28.1286}
+  m_SizeDelta: {x: 434.44608, y: 56.2572}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2028973688
 MonoBehaviour:
@@ -5809,7 +5819,12 @@ MonoBehaviour:
     Intelligence: 0
     Strenght: 0
     Luck: 0
+    ElementalResistance: 0
+    HolyResistance: 0
     CharacterStatus: 0
+    Poison: 0
+    Frost: 0
+    Terror: 0
   ProgressBar: {fileID: 0}
   Panel: {fileID: 0}
   SelectionTriangle: {fileID: 0}
