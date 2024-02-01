@@ -1,31 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyDetectionManager : MonoBehaviour
 {
     private float detectionRadius = 5f;
     public LayerMask playerLayer;
 
-    private bool playerDetected = false;
-
     private GameObject detectedPlayer;
 
-    private float moveSpeed = 4f;
+    private float moveSpeed = 3f;
 
-    private Rigidbody2D rb;
+    NavMeshAgent agent;
+
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        agent = GetComponent<NavMeshAgent>();
+        agent.updateUpAxis = false;
+        agent.updateRotation = false;
+
+        agent.speed = moveSpeed;
     }
 
     void Update()
     {
         if(DetectPlayer())
         {
-            Vector2 direction = (detectedPlayer.transform.position - transform.position).normalized;
-            rb.velocity = new Vector2(direction.x * moveSpeed, direction.y * moveSpeed);
             FacePlayer();
+            agent.SetDestination(detectedPlayer.transform.position);
         }
     }
 
