@@ -5,12 +5,10 @@ public class PlayerController : MonoBehaviour
     private float Speed = 5f;
 
     private Rigidbody2D rb;
-    private Collider2D playerCollider;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        playerCollider = GetComponent<Collider2D>();
     }
 
     void Update()
