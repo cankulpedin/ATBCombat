@@ -26,12 +26,30 @@ public class BattleStateMachine : MonoBehaviour
 
     public List<GameObject> HeroQueue = new List<GameObject>();
 
+    [SerializeField]
+    private List<EnemyIdPair> exposedDictionary = new List<EnemyIdPair>();
+
+    private void Awake()
+    {
+        Heroes.AddRange(GameObject.FindGameObjectsWithTag("Hero"));
+        foreach(EnemyIdPair pair in exposedDictionary)
+        {
+            if(pair.key == DataManager.instance.enemyId)
+            {
+                Enemies.Add(pair.enemyObject);
+            }
+        }
+
+    }
+
     private void Start()
     {
         battleState = State.Waiting;
 
-        Heroes.AddRange(GameObject.FindGameObjectsWithTag("Hero"));
-        Enemies.AddRange(GameObject.FindGameObjectsWithTag("Enemy"));
+        foreach(GameObject enemy in Enemies)
+        {
+            Instantiate(enemy, new Vector2(-3,-1), new Quaternion(0,180,0,0)); // TODO instantiate side by side
+        }
     }
 
     private void Update()

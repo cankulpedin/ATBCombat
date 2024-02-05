@@ -2,17 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class EnemyDetectionManager : MonoBehaviour
 {
-    private float detectionRadius = 5f;
     public LayerMask playerLayer;
 
     private GameObject detectedPlayer;
 
-    private float moveSpeed = 3f;
-
     NavMeshAgent agent;
+
+    [SerializeField]
+    EnemyDataTravelMode enemyData;
 
     private void Start()
     {
@@ -20,7 +21,7 @@ public class EnemyDetectionManager : MonoBehaviour
         agent.updateUpAxis = false;
         agent.updateRotation = false;
 
-        agent.speed = moveSpeed;
+        agent.speed = enemyData.speed;
     }
 
     void Update()
@@ -46,7 +47,7 @@ public class EnemyDetectionManager : MonoBehaviour
 
     private bool DetectPlayer()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, detectionRadius, playerLayer);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, enemyData.detectionRadius, playerLayer);
         foreach (Collider2D collider in colliders)
         {
             if (collider.CompareTag("Player"))
@@ -58,9 +59,20 @@ public class EnemyDetectionManager : MonoBehaviour
         return false;
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            agent.isStopped = true;
+            DataManager.instance.enemyId = enemyData.enemyId;
+            // TODO add transiton animation
+            SceneManager.LoadScene("BattleScene");
+        }
+    }
+
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        Gizmos.DrawWireSphere(transform.position, enemyData.detectionRadius);
     }
 }

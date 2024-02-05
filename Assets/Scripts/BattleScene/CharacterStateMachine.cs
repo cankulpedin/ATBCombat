@@ -24,7 +24,6 @@ public class CharacterStateMachine : MonoBehaviour
 
     private float CurrentCooldown = 0f;
     private float MaxCooldown;
-    private float AnimationSpeed = 5f;
 
     public Image ProgressBar;
 
@@ -43,8 +42,6 @@ public class CharacterStateMachine : MonoBehaviour
 
     private int TargetIndex = 0;
 
-    private Vector3 InitialPosition;
-
     private bool ActionStarted = false;
 
     public Animator animator;
@@ -56,8 +53,6 @@ public class CharacterStateMachine : MonoBehaviour
         ActionType = ActionTypes.Wait;
 
         animator = GetComponent<Animator>();
-
-        InitialPosition = transform.position;
 
         CharacterType = gameObject.tag;
 
@@ -106,17 +101,11 @@ public class CharacterStateMachine : MonoBehaviour
             case ActionTypes.Attack:
                 animator.SetBool("attacking", true);
 
-                while (MoveTowards(target.transform.position)) yield return null;
-
-                animator.SetBool("attacking", false);
+                yield return new WaitForSeconds(1f);
 
                 target.GetComponent<CharacterStateMachine>().characterData.HP -= characterData.baseDamage;
 
-                animator.SetBool("attacking", true);
-
                 yield return new WaitForSeconds(1f);
-
-                while (MoveTowards(InitialPosition)) yield return null;
 
                 animator.SetBool("attacking", false);
 
@@ -128,11 +117,6 @@ public class CharacterStateMachine : MonoBehaviour
         ActionStarted = false;
         CurrentCooldown = 0f;
         state = State.Processing;
-    }
-
-    private bool MoveTowards(Vector3 target)
-    {
-        return target != (transform.position = Vector3.MoveTowards(transform.position, target, AnimationSpeed * Time.deltaTime));
     }
 
     private void Processing()

@@ -1,16 +1,11 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public class EnemyDataTravelMode
 {
     public float speed;
+    public float detectionRadius;
 
-    public enum EnemyState
-    {
-        Idle,
-        Chasing,
-        Returning
-    }
-
-    public EnemyState currentState;
+    public string enemyId;
 }
