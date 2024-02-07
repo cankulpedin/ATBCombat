@@ -64,6 +64,25 @@ public class DialogueManager : MonoBehaviour
     public void SelectResponse(int responseIndex)
     {
         gameManager.SetWorldEvent(currentNode.responses[responseIndex].outcome, true);
+
+        int nextIndex = currentNode.responses[responseIndex].nextDialogueNodeIndex;
+        if(nextIndex != -1)
+        {
+            currentNode = currentDialogue.dialogueNodes[nextIndex];
+            DisplayCurrentNode();
+        }
+        else
+        {
+            Transform buttonWrapperTransform = buttonWrapper.transform;
+            foreach (Transform child in buttonWrapperTransform)
+            {
+                Destroy(child.gameObject);
+            }
+            npcText.text = "";
+            dialogueCanvas.SetActive(false);
+
+            NotifyDialogueEnded();
+        }
     }
 
     public void DisplayCurrentNode()

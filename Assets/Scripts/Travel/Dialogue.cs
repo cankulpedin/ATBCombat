@@ -24,6 +24,7 @@ public class Dialogue : ScriptableObject
     {
         public string playerLine;
         public Outcome outcome;
+        public Outcome outcomeToRemove = Outcome.NULL;
         public int nextDialogueNodeIndex;
     }
 
