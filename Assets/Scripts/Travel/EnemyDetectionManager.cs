@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
-public class EnemyDetectionManager : MonoBehaviour
+public class EnemyDetectionManager : MonoBehaviour, IDialogueObserver
 {
     public LayerMask playerLayer;
 
@@ -15,8 +15,12 @@ public class EnemyDetectionManager : MonoBehaviour
     [SerializeField]
     EnemyDataTravelMode enemyData;
 
+    private bool enemyCanMove = true;
+
     private void Start()
     {
+        FindFirstObjectByType<DialogueManager>().RegisterObserver(this);
+
         agent = GetComponent<NavMeshAgent>();
         agent.updateUpAxis = false;
         agent.updateRotation = false;
@@ -26,11 +30,27 @@ public class EnemyDetectionManager : MonoBehaviour
 
     void Update()
     {
-        if(DetectPlayer())
+        if(!enemyCanMove)
         {
+            Debug.Log("Stop");
+            agent.isStopped = true;
+        }
+        else if(DetectPlayer())
+        {
+            agent.isStopped = false;
             FacePlayer();
             agent.SetDestination(detectedPlayer.transform.position);
         }
+    }
+
+    public void NotifyDialogueStarted()
+    {
+        enemyCanMove = false;
+    }
+
+    public void NotifyDialogueEnded()
+    {
+        enemyCanMove = true;
     }
 
     void FacePlayer()
