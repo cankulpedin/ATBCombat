@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DialogueTrigger : MonoBehaviour
 {
-    public float interactionRange = 2f; // Adjust this value as needed
+    public float interactionRange = 2f;
     public Dialogue dialogue;
     private bool playerInRange = false;
 
@@ -31,7 +31,7 @@ public class DialogueTrigger : MonoBehaviour
 
     private void Update()
     {
-        if (playerInRange && Input.GetKeyDown(KeyCode.Space))
+        if (playerInRange && Input.GetKeyDown(KeyCode.F) )
         {
             TriggerDialogue();
         }
