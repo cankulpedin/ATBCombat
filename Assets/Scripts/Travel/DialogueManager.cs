@@ -117,12 +117,12 @@ public class DialogueManager : MonoBehaviour
 
             if (i == selectedResponseIndex)
             {
-                responseButton.GetComponent<Image>().color = new Color(27f, 58f, 209f);
+                responseButton.GetComponent<Image>().color = new Color(27f / 255f, 58f / 255f, 209f / 255f);
                 responseButton.Select();
             }
             else
             {
-                responseButton.GetComponent<Image>().color = new Color(72f, 84f, 142f);
+                responseButton.GetComponent<Image>().color = new Color(72f / 255f, 84f / 255f, 142f / 255f);
             }
         }
     }
