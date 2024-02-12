@@ -1,27 +1,31 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour, IDialogueObserver
+public class PlayerController : MonoBehaviour, IPauseObserver
 {
-    private float Speed = 5f;
+    private const float initialSpeed = 5f;
+    private float Speed = initialSpeed;
 
     private Rigidbody2D rb;
     private bool playerCanMove = true;
 
+
     void Start()
     {
-        FindFirstObjectByType<DialogueManager>().RegisterObserver(this);
+        FindFirstObjectByType<GameManager>().RegisterObserver(this);
 
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void NotifyDialogueStarted()
+    public void NotifyPause()
     {
         playerCanMove = false;
+        
     }
 
-    public void NotifyDialogueEnded()
+    public void NotifyUnpause()
     {
         playerCanMove = true;
+        
     }
 
     void Update()
@@ -35,6 +39,9 @@ public class PlayerController : MonoBehaviour, IDialogueObserver
             movement.Normalize();
 
             rb.velocity = new Vector2(movement.x * Speed, movement.y * Speed);
+        } else
+        {
+            rb.velocity = Vector2.zero;
         }
     }
 }

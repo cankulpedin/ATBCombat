@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using System;
 using TMPro;
@@ -18,10 +17,9 @@ public class DialogueManager : MonoBehaviour
 
     public TMP_Text npcText;
 
-    [SerializeField]
-    private List<IDialogueObserver> observers = new List<IDialogueObserver>();
-
     private int selectedResponseIndex = 0;
+
+    public bool isDialogueActive = false;
 
     private void Awake()
     {
@@ -67,35 +65,10 @@ public class DialogueManager : MonoBehaviour
         currentDialogue = dialogue;
         currentNode = dialogue.dialogueNodes[0];
         selectedResponseIndex = 0;
+        isDialogueActive = true;
         dialogueCanvas.SetActive(true);
-        NotifyDialogueStarted();
+        gameManager.PauseGame();
         DisplayCurrentNode();
-    }
-
-    public void RegisterObserver(IDialogueObserver observer)
-    {
-        observers.Add(observer);
-    }
-
-    public void UnregisterObserver(IDialogueObserver observer)
-    {
-        observers.Remove(observer);
-    }
-
-    private void NotifyDialogueStarted()
-    {
-        foreach (var observer in observers)
-        {
-            observer.NotifyDialogueStarted();
-        }
-    }
-
-    private void NotifyDialogueEnded()
-    {
-        foreach (var observer in observers)
-        {
-            observer.NotifyDialogueEnded();
-        }
     }
 
     public void SelectResponse(int responseIndex)
@@ -117,8 +90,8 @@ public class DialogueManager : MonoBehaviour
             }
             npcText.text = "";
             dialogueCanvas.SetActive(false);
-
-            NotifyDialogueEnded();
+            isDialogueActive = false;
+            gameManager.UnpauseGame();
         }
     }
 

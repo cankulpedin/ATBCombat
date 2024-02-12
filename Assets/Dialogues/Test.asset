@@ -19,7 +19,7 @@ MonoBehaviour:
     - playerLine: Good
       outcome: 1
       outcomeToRemove: 0
-      nextDialogueNodeIndex: 2
+      nextDialogueNodeIndex: 1
     - playerLine: Bad
       outcome: 2
       outcomeToRemove: 0

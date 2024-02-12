@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
-public class EnemyDetectionManager : MonoBehaviour, IDialogueObserver
+public class EnemyDetectionManager : MonoBehaviour, IPauseObserver
 {
     public LayerMask playerLayer;
 
@@ -19,7 +19,7 @@ public class EnemyDetectionManager : MonoBehaviour, IDialogueObserver
 
     private void Start()
     {
-        FindFirstObjectByType<DialogueManager>().RegisterObserver(this);
+        FindFirstObjectByType<GameManager>().RegisterObserver(this);
 
         agent = GetComponent<NavMeshAgent>();
         agent.updateUpAxis = false;
@@ -43,12 +43,12 @@ public class EnemyDetectionManager : MonoBehaviour, IDialogueObserver
         }
     }
 
-    public void NotifyDialogueStarted()
+    public void NotifyPause()
     {
         enemyCanMove = false;
     }
 
-    public void NotifyDialogueEnded()
+    public void NotifyUnpause()
     {
         enemyCanMove = true;
     }

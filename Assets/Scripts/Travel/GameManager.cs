@@ -8,6 +8,9 @@ public class GameManager : MonoBehaviour
 
     private Dictionary<Outcome, bool> worldEvent = new Dictionary<Outcome, bool>();
 
+    [SerializeField]
+    private List<IPauseObserver> observers = new List<IPauseObserver>();
+
     private void Awake()
     {
         if (instance == null)
@@ -33,11 +36,48 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        foreach(var pair in worldEvent)
+        /*foreach(var pair in worldEvent)
         {
             Debug.Log($"Key: {pair.Key}, Value: {pair.Value}");
+        }*/
+    }
+
+    public void RegisterObserver(IPauseObserver observer)
+    {
+        observers.Add(observer);
+    }
+
+    public void UnregisterObserver(IPauseObserver observer)
+    {
+        observers.Remove(observer);
+    }
+
+    private void NotifyGamePause()
+    {
+        foreach (var observer in observers)
+        {
+            observer.NotifyPause();
         }
     }
+
+    private void NotifyGameUnpause()
+    {
+        foreach (var observer in observers)
+        {
+            observer.NotifyUnpause();
+        }
+    }
+
+    public void PauseGame()
+    {
+        NotifyGamePause();
+    }
+
+    public void UnpauseGame()
+    {
+        NotifyGameUnpause();
+    }
+
 
     public void SetWorldEvent(Outcome outcome, bool status)
     {
