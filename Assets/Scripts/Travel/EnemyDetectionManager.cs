@@ -32,7 +32,6 @@ public class EnemyDetectionManager : MonoBehaviour, IPauseObserver
     {
         if(!enemyCanMove)
         {
-            Debug.Log("Stop");
             agent.isStopped = true;
         }
         else if(DetectPlayer())
