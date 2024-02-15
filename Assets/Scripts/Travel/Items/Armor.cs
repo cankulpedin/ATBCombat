@@ -1,8 +1,11 @@
 using System;
+using UnityEngine;
 
 [Serializable]
-public class Armor
+[CreateAssetMenu(fileName = "ArmorName", menuName = "Items/Create new armor")]
+public class Armor: ScriptableObject
 {
-    public string name;
+    public string label;
+    public string description;
 
 }

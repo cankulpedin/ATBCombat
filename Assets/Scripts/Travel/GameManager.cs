@@ -6,10 +6,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    private Dictionary<Outcome, bool> worldEvent = new Dictionary<Outcome, bool>();
-
     [SerializeField]
     private List<IPauseObserver> observers = new List<IPauseObserver>();
+
+    // Dictionary<Outcome, bool> worldEvents;
 
     private void Awake()
     {
@@ -28,15 +28,13 @@ public class GameManager : MonoBehaviour
     {
         // Instantiate all world events false initially
         // TODO get world events from save file
-        foreach(Outcome outcome in Enum.GetValues(typeof(Outcome)))
-        {
-            worldEvent[outcome] = false; 
-        }
+        
     }
 
     private void Update()
     {
-        /*foreach(var pair in worldEvent)
+        /*
+        foreach(var pair in worldEvents)
         {
             Debug.Log($"Key: {pair.Key}, Value: {pair.Value}");
         }*/
@@ -76,14 +74,5 @@ public class GameManager : MonoBehaviour
     public void UnpauseGame()
     {
         NotifyGameUnpause();
-    }
-
-
-    public void SetWorldEvent(Outcome outcome, bool status)
-    {
-        if(outcome != Outcome.NULL)
-        {
-            worldEvent[outcome] = status;
-        }
     }
 }

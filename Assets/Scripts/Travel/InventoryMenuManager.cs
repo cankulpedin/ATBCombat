@@ -38,11 +38,11 @@ public class InventoryMenuManager : MonoBehaviour
         {
             for(int i = 0; i < 10; i++) {
                 Weapon weapon = new Weapon();
-                weapon.name = $"test {i}";
+                weapon.label = $"test {i}";
                 Armor armor = new Armor();
-                armor.name = $"test {i}";
+                armor.label = $"test {i}";
                 Consumable consumable = new Consumable();
-                consumable.name = $"test {i}";
+                consumable.label = $"test {i}";
 
                 weapons.Add(weapon);
                 armors.Add(armor);
@@ -55,30 +55,51 @@ public class InventoryMenuManager : MonoBehaviour
     {
         foreach(Weapon weapon in weapons)
         {
-            GameObject inst = Instantiate(menuItemObject);
-            inst.transform.SetParent(menuObjects[0].transform);
-            inst.transform.GetChild(1).GetComponent<TMP_Text>().text = weapon.name;
+            AddItemToMenu(weapon);
         }
 
         foreach (Armor armor in armors)
         {
-            GameObject inst = Instantiate(menuItemObject);
-            inst.transform.SetParent(menuObjects[1].transform);
-            inst.transform.GetChild(1).GetComponent<TMP_Text>().text = armor.name;
+            AddItemToMenu(armor);
         }
 
         foreach (Consumable consumable in consumables)
         {
-            GameObject inst = Instantiate(menuItemObject);
-            inst.transform.SetParent(menuObjects[2].transform);
-            inst.transform.GetChild(1).GetComponent<TMP_Text>().text = consumable.name;
+            AddItemToMenu(consumable);
         }
+    }
+
+    private void AddItemToMenu(Weapon weapon)
+    {
+        GameObject inst = Instantiate(menuItemObject);
+        inst.transform.SetParent(menuObjects[0].transform);
+        inst.transform.GetChild(1).GetComponent<TMP_Text>().text = weapon.label;
+
+        inst.gameObject.GetComponent<ItemButtonHelper>().weapon = weapon;
+    }
+
+    private void AddItemToMenu(Armor armor)
+    {
+        GameObject inst = Instantiate(menuItemObject);
+        inst.transform.SetParent(menuObjects[1].transform);
+        inst.transform.GetChild(1).GetComponent<TMP_Text>().text = armor.label;
+
+        inst.gameObject.GetComponent<ItemButtonHelper>().armor = armor;
+
+    }
+
+    private void AddItemToMenu(Consumable consumable)
+    {
+        GameObject inst = Instantiate(menuItemObject);
+        inst.transform.SetParent(menuObjects[2].transform);
+        inst.transform.GetChild(1).GetComponent<TMP_Text>().text = consumable.label;
+
+        inst.gameObject.GetComponent<ItemButtonHelper>().consumable = consumable;
+
     }
 
     private void Update()
     {
-        Debug.Log(isActive);
-
         if (isActive)
         {
             SetSelectedItem();
@@ -96,17 +117,43 @@ public class InventoryMenuManager : MonoBehaviour
     private void SetTransparent()
     {
         GameObject prevHoveredMenu = menuObjects[currentMenu];
-        Image prevHoveredItem = prevHoveredMenu.transform.GetChild(currentIndex).GetComponent<Image>();
+        Transform itemButton = prevHoveredMenu.transform.GetChild(currentIndex);
+        
+        Image prevHoveredItem = itemButton.GetComponent<Image>();
         prevHoveredItem.color = transparent;
+    }
+
+    private int FindNextFilledMenuType(bool decrease)
+    {
+        int checkingIndex = decrease ?  currentMenu + 3 - 1 : currentMenu + 1; // next index
+        int normalizedIndex = Mathf.Abs(checkingIndex % 3);
+        while (normalizedIndex != currentMenu)
+        {
+            if(menuObjects[normalizedIndex].transform.childCount > 0)
+            {
+                return normalizedIndex;
+            }
+            if (decrease) normalizedIndex = Mathf.Abs((checkingIndex + 3 - 1) % 3);
+            else normalizedIndex = Mathf.Abs((checkingIndex + 1) % 3);
+        }
+        return currentMenu;
     }
 
     private void NavigateOnMainMenu()
     {
+
         // TODO Add shift+arrow down/up jump 10 item
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
+            int currentMenuChildCount = menuObjects[currentMenu].transform.childCount;
+
+            if (currentIndex == currentMenuChildCount - 1)
+            {
+                return;
+            }
+
             SetTransparent();
-            if (currentIndex != 9)
+            if ( currentIndex != 9)
             {
                 currentIndex++; // TODO scroll to next 10
             }
@@ -115,29 +162,27 @@ public class InventoryMenuManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
             SetTransparent();
-            if(currentMenu != 2)
-            {
-                currentMenu++;
-            }
+            currentMenu = FindNextFilledMenuType(false);
             SetSelectedItem();
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             SetTransparent();
-            if (currentMenu != 0)
-            { 
-                currentMenu--;
-            }
+            currentMenu = FindNextFilledMenuType(true);
             SetSelectedItem();
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             SetTransparent();
-            if(currentIndex != 0)
+            if (currentIndex != 0)
             {
                 currentIndex--;
             }
             SetSelectedItem();
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+
         }
         else if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -147,5 +192,23 @@ public class InventoryMenuManager : MonoBehaviour
             currentIndex = 0;
             SetTransparent();
         }
+    }
+
+    public void TakeItem(Weapon weapon)
+    {
+        weapons.Add(weapon);
+        AddItemToMenu(weapon);
+    }
+
+    public void TakeItem(Armor armor)
+    {
+        armors.Add(armor);
+        AddItemToMenu(armor);
+    }
+
+    public void TakeItem(Consumable consumable)
+    {
+        consumables.Add(consumable);
+        AddItemToMenu(consumable);
     }
 }

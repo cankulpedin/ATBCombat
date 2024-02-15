@@ -1,7 +1,10 @@
 using System;
+using UnityEngine;
 
 [Serializable]
-public class Weapon 
+[CreateAssetMenu(fileName = "WeaponName", menuName = "Items/Create new weapon")]
+public class Weapon: ScriptableObject
 {
-    public string name;
+    public string label;
+    public string description;
 }

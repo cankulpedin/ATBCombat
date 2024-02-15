@@ -28,13 +28,13 @@ MonoBehaviour:
     npcLine: Why do you feel good?
     responses:
     - playerLine: Life's good
-      outcome: 0
+      outcome: 3
       outcomeToRemove: 0
       nextDialogueNodeIndex: -1
   - npcName: box
     npcLine: Why do you feel bad?
     responses:
     - playerLine: Life's bad
-      outcome: 0
+      outcome: 3
       outcomeToRemove: 0
       nextDialogueNodeIndex: -1

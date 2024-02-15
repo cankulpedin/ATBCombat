@@ -15,6 +15,7 @@ public class MenuManager : MonoBehaviour
     private DialogueManager dialogueManager;
 
     public GameObject pauseMenu;
+    public GameObject pauseMenuButtonWrapper;
     public GameObject[] buttons = new GameObject[3];
     public GameObject[] menuContents = new GameObject[3];
 
@@ -22,7 +23,6 @@ public class MenuManager : MonoBehaviour
     private Color transparent = new Color(255f, 255f, 255f, 0f);
 
     private InventoryMenuManager inventoryMenuManager;
-
 
     private void Start()
     {
@@ -43,6 +43,7 @@ public class MenuManager : MonoBehaviour
             isMenuActive = true;
             gameManager.PauseGame();
             pauseMenu.SetActive(true);
+            pauseMenuButtonWrapper.SetActive(true);
             currentHoverIndex = 0;
             buttons[currentHoverIndex].GetComponent<Image>().color = selectionColor;
 
@@ -51,6 +52,7 @@ public class MenuManager : MonoBehaviour
             isMenuActive = false;
             gameManager.UnpauseGame();
             pauseMenu.SetActive(false);
+            pauseMenuButtonWrapper.SetActive(false);
             currentHoverIndex = 0;
             selectedIndex = -1;
         } else if (isMenuActive && selectedIndex == -1)

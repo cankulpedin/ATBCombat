@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
+    OutcomeManager outcomeManager;
     GameManager gameManager;
 
     private Dialogue.DialogueNode currentNode;
@@ -21,8 +22,9 @@ public class DialogueManager : MonoBehaviour
 
     public bool isDialogueActive = false;
 
-    private void Awake()
+    private void Start()
     {
+        outcomeManager = GameObject.Find("OutcomeManager").GetComponent<OutcomeManager>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
@@ -73,7 +75,12 @@ public class DialogueManager : MonoBehaviour
 
     public void SelectResponse(int responseIndex)
     {
-        gameManager.SetWorldEvent(currentNode.responses[responseIndex].outcome, true);
+        Outcome outcome = currentNode.responses[responseIndex].outcome;
+        Debug.Log(outcome);
+        if (!outcomeManager.worldEvents[outcome].Equals(true))
+        {
+            outcomeManager.SetWorldEvent(currentNode.responses[responseIndex].outcome, true);
+        }
 
         int nextIndex = currentNode.responses[responseIndex].nextDialogueNodeIndex;
         if(nextIndex != -1)

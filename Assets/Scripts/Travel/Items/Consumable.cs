@@ -1,8 +1,10 @@
 using System;
+using UnityEngine;
 
 [Serializable]
-public class Consumable 
+[CreateAssetMenu(fileName = "ConsumableName", menuName = "Items/Create new consumable")]
+public class Consumable: ScriptableObject
 {
-    public string name;
-
+    public string label;
+    public string description;
 }

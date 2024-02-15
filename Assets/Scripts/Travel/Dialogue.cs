@@ -4,7 +4,8 @@ public enum Outcome
 {
     NULL,
     Good,
-    Bad
+    Bad,
+    Get_Item_BroadSword
 }
 
 [CreateAssetMenu(fileName = "New Dialogue", menuName = "Dialogue")]
